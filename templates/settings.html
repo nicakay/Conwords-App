@@ -1,0 +1,104 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Settings
+{% endblock %}
+
+{% block main %}
+
+<div class="maininfo">
+
+    <h3 class="text-info mb-3"><b>Parts of Speech:</b></h3>
+    <ul class="list-group">
+        {% if pos_list_empty == 1 %}
+        <li class="list-group-item error">{{ pos_placeholder }}</li>
+        {% else %}
+            {% for part_of_speech in pos_list %}
+                <form action="/settings" method="post">
+                    <li class="list-group-item list-item-tag">{{ part_of_speech[0] }} <i>({{ part_of_speech[1] }})</i>
+
+                        <input name="pos_item" value="{{ part_of_speech[0] }}" type="hidden">
+                        <div class="right">
+                            <button type="submit" class="btn btn-danger btn-list delete">Delete</button>  
+                        </div>
+                        
+                    </li>
+                </form>
+            {% endfor %}
+        {% endif %}
+    </ul>
+
+    <form action="/settings" method="post">
+        <div class="mb-3 containter">
+            <div class="row">
+                <div class="col-9">
+                    <label for="inputPartOfSpeech" class="form-label">Add a new Part of Speech:</label>
+                </div>
+                <div class="col-3">
+                    <label for="inputPOSAbbreviation" class="form-label">Abbreviation:</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-9">
+                    <input id="inputPartOfSpeech" name="partOfSpeech" class="form-control" required>
+                </div>
+                <div class="col-3">
+                    <input id="inputPOSAbbreviation" name="partOfSpeechAbbreviation" class="form-control mb-3" required> 
+                </div>
+            </div>
+            <div class="add-btn-div">
+                <button class="btn btn-warning mb-2 add-btn-settings" type="submit">Add</button>
+            </div>
+        </div>
+    </form> 
+
+    <hr>
+
+    <h3 class="text-info mb-3"><b>Grammatical Genders:</b></h3>
+    <ul class="list-group">
+        {% if gram_list_empty == 1 %}
+        <li class="list-group-item error">{{ gram_placeholder }}</li>
+        {% else %}
+            {% for gram_gender in gram_gender_list %}
+                <form action="/settings" method="post">
+                    <li class="list-group-item list-item-tag">{{ gram_gender[0] }} <i>({{ gram_gender[1] }})</i>
+
+                        <input name="gram_gender_item" value="{{ gram_gender[0] }}" type="hidden">
+                        <div class="right">
+                            <button type="submit" class="btn btn-danger btn-list delete">Delete</button>
+                        </div>
+                        
+                    </li> 
+                </form>
+            {% endfor %}
+        {% endif %}
+    </ul>
+
+    <form action="/settings" method="post">
+        <div class="mb-3 containter">
+            <div class="row">
+                <div class="col-9">
+                    <label for="inputGrammaticalGender" class="form-label">Add a new Grammatical Gender:</label>
+                </div>
+                <div class="col-3">
+                    <label for="inputGramAbbreviation" class="form-label">Abbreviation:</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-9">
+                    <input id="inputGrammaticalGender" name="gramGender" class="form-control" required>
+                </div>
+                <div class="col-3">
+                    <input id="inputGramAbbreviation" name="gramGenderAbbreviation" class="form-control mb-3" required> 
+                </div>
+            </div>
+            <div class="add-btn-div">
+                <button class="btn btn-warning mb-2 add-btn-settings" type="submit">Add</button>
+            </div>
+        </div>
+    </form> 
+
+</div>
+    
+
+{% endblock main %}

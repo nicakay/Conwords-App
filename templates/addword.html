@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Add Word
+{% endblock %}
+
+{% block main %}
+
+<div class="row mainrow">
+    <div class="col-sm-4 left-menu">
+        <div class="dict-display">
+            <h4><strong>Browse</strong></h4>
+
+            {% for word in words %}
+                <a class="dict-link" href="/dictionary?value={{ word[0] }}">{{ word[1] }}</a><br/>
+            {% endfor %}
+
+        </div>
+    </div>
+    <div class="col-sm-8">
+        <div class="right-inner-col">
+
+            <form action="/addword" method="post">
+                <h3>Add a new word</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="inputWord">Word</label>
+                        <input type="text" class="form-control" id="inputWord" name="inputWord" value="{{ new_word }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="inputMeaning">Meaning</label>
+                        <input type="text" class="form-control" id="inputMeaning" name="inputMeaning">
+                    </div>
+                    <div class="form-row row">
+                        <div class="form-group col-md-6">
+                            <label for="inputPOS">Part of speech</label>
+                            <select id="inputPOS" name="inputPOS" class="form-control">
+                                <option disabled selected>Choose...</option>
+                                {% for pos in pos_list %}
+                                    <option value="{{ pos[0] }}">{{ pos[0] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div> 
+                        <div class="form-group col-md-6">
+                            <label for="inputGender">Gender</label>
+                            <select id="inputGender" name="inputGender" class="form-control">
+                                <option value="none" selected>Choose if applies...</option>
+                                {% for gender in gram_gender_list %}
+                                    <option value="{{ gender[0] }}">{{ gender[0] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div> 
+                    </div>
+                    
+                </div>
+                <div class="form-group">
+                    <label for="inputPhonetic">Phonetic form</label>
+                    <input type="text" class="form-control" name="inputPhonetic" id="inputPhonetic">
+                </div>
+                <div class="form-group">
+                    <label for="inputMorphology">Morphology</label>
+                    <input type="text" class="form-control" name="inputMorphology" id="inputMorphology">
+                </div>
+                <div class="form-group">
+                    <label for="inputEtymology">Etymology</label>
+                    <input type="text" class="form-control" name="inputEtymology" id="inputEtymology">
+                </div>
+                <div class="form-group">
+                    <label for="inputLiteralMeaning">Literal meaning</label>
+                    <input type="text" class="form-control" name="inputLiteralMeaning" id="inputLiteralMeaning">
+                </div>
+                <div class="form-group">
+                    <label for="inputExample">Example</label>
+                    <input type="text" class="form-control" name="inputExample" id="inputExample">
+                </div>
+                <div class="btn-cenetered-div">
+                    <button type="submit" class="btn btn-warning big-btn">Add</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

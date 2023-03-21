@@ -1,0 +1,229 @@
+/*
+dark green: #264233
+papirus: #ffe3cd
+army green: #869486
+chicken: #f5e446
+rust red: #bb2834
+blue: #0f5c95
+light rust: #f16c6f
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Raleway', -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-weight: 300;
+    background-color: #869486;
+}
+
+b {
+    font-weight: 600;
+}
+
+h4 {
+    margin-bottom: 15px;
+}
+
+header {
+    text-align: center;
+    background-color: #264233;
+}
+
+header h1 {
+    color: #0f5c95;
+}
+
+label {
+    margin: 12px 0px 3px 3px;
+}
+
+.nav-link {
+    font-weight: 600;
+    color: #e0d88f;
+}
+
+.nav li {
+    border: 3px solid rgba(33, 37, 41, 0);
+}
+
+.nav li:hover {
+    border: 3px solid #264233;
+    background-color: #bb2834;
+    border-radius: 12px;
+}
+
+.nav-link:hover {
+    color:#ffe3cd;
+}
+
+.container {
+    width: 60%;
+    background-color: #ffe3cd;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+}
+
+.mainrow {
+    width: 100%;
+}
+
+.left-menu {
+    background-color: #ffe3cd;
+    height: 100vh;
+}
+
+.dict-display {
+    background-color: #f9faf3;
+    height: 100%;
+    padding: 1.5rem 1.5rem;
+    border-right: 3px solid #7e7e7e;
+    border-top-right-radius: 10px;
+}
+
+.dict-link {
+    text-decoration: none;
+    font-weight: bold;
+    color: #264233;
+}
+
+.dict-link:hover {
+    color: #bb2834;
+}
+
+.abbr {
+    font-style: italic;
+    color: #0f5c95;
+    font-weight: normal;
+}
+
+.big-btn {
+    margin: 20px 8px 8px 8px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    width: 150px;
+    font-weight: bold;
+}
+
+.medium-btn {
+    margin: 20px 8px 8px 8px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    width: 110px;
+    font-weight: bold;
+}
+
+.btn-cenetered-div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.add-btn-settings {
+    margin-top: 10px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    width: 100px;
+    font-weight: bold;
+}
+
+.right-inner-col {
+    width: 80%;
+    margin: 2rem auto;
+}
+
+ul.no-bullets {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.reg-login {
+    align-items: center;
+    text-align: center;
+    padding: 20px 0 50px 0;
+}
+
+.notification {
+    font-weight: bold;
+}
+
+.error {
+    color: #bb2834;
+}
+
+.success {
+    color: rgb(0, 158, 0);
+}
+
+.maininfo {
+    height: 100%;
+    padding: 40px 40px 50px 40px;
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.right {
+    float: right;
+}
+
+.btn-list {
+    padding: 0px 10px;
+    font-weight: bold;
+}
+
+.delete {
+    background-color: #f16c6f;
+    border: 1px solid #f16c6f;
+}
+
+.copy {
+    background-color: #869486;
+    border: 1px solid #869486;
+}
+
+.list-item-tag {
+    box-shadow: rgba(38, 75, 109, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.139) 0px 1px 3px -1px;
+}
+
+.record {
+    background-color: #f9faf3;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    padding: 0.3rem;
+}
+
+.record-label {
+    font-size: 0.8rem;
+    color: #646464;
+}
+
+.edit {
+    position: relative;
+}
+
+.toedit {
+    z-index: 9;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
+table {
+    width: 100%;
+}
+
+.error-div {
+    height: 3rem;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-top: 8rem;
+}

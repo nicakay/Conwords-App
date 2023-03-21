@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Dictionary
+{% endblock %}
+
+{% block main %}
+
+<div class="row mainrow">
+    <div class="col-sm-4 left-menu">
+        <div class="dict-display" id="dictdiv">
+            <h4><strong>Browse</strong></h4>
+
+            {% for word in words %}
+                <a class="dict-link" name="word-link" href="/dictionary?value={{ word[0] }}">{{ word[1] }} <span class="abbr">{{ word[2] }}</span></a><br/>
+            {% endfor %}
+
+        </div>
+    </div>
+    <div class="col-sm-8">
+        <div class="right-inner-col">
+            <div class="error-div">
+                <span class="error">{{ error }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

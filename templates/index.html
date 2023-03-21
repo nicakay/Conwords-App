@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Home
+{% endblock %}
+
+
+{% block main %}
+
+<div class="maininfo">
+   <h4><b>Welcome {{ username[0] }}!</b></h4>
+   <h4>Your dictionary statistics</h4>
+   <ul>
+      <li>Entries: {{ num_of_entries[0] }}</li>
+      <li>Words: {{ num_of_words[0] }}</li> 
+   </ul>
+</div>
+ 
+{% endblock %}

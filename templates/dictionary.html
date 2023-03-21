@@ -1,0 +1,148 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Dictionary
+{% endblock %}
+
+{% block main %}
+
+<div class="row mainrow">
+    <div class="col-sm-4 left-menu">
+        <div class="dict-display" id="dictdiv">
+            <h4><strong>Browse</strong></h4>
+
+            {% for word in words %}
+                <a class="dict-link" name="word-link" href="/dictionary?value={{ word[0] }}">{{ word[1] }} <span class="abbr">{{ word[2] }}</span></a><br/>
+            {% endfor %}
+
+        </div>
+    </div>
+    <div class="col-sm-8">
+        <div class="right-inner-col">
+
+            {% if record is not none %}
+
+            <form action="/dictionary" method="post">
+                <div class="record">
+                    <table class="table table-hover table-striped">
+                        <colgroup>
+                            <col span="1" style="width: 50%;">
+                            <col span="1" style="width: 50%;">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th scope="col" colspan="2">
+                                    <span class="h4"><strong>{{ word }}</strong></span>
+                                    <div class="right">
+                                        <i>{{ part_of_speech_abbr }} {{ gender_abbr[0] }}</i>
+                                    </div>
+                                </th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row"><span class="record-label">Meaning</span></th>
+                                <td class="edit" title="Double-click to edit">
+                                    <b><span>{{ meaning }}</span>
+                                    <input type="text" name="meaning" value="{{ meaning }}" class="toedit" readonly="readonly"></b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><span class="record-label">Part of speech</span></th>
+                                <td class="edit" title="Double-click to edit">
+                                    <i><span>{{ part_of_speech }}</span>
+                                    <input type="text" name="pos" value="{{ part_of_speech }}" class="toedit" readonly="readonly"></i>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><span class="record-label">Grammatical gender</span></th>
+                                <td class="edit" title="Double-click to edit">
+                                    <i><span>{{ gender }}</span>
+                                    <input type="text" name="gender" value="{{ gender }}" class="toedit" readonly="readonly"></i>
+                                </td>      
+                            </tr>   
+                            <tr>
+                                <th scope="row"><span class="record-label">Phonetic form</span></th>
+                                <td class="edit" title="Double-click to edit">
+                                    [<span>{{ record[5] }}</span>
+                                    <input type="text" name="phonetic" value="{{ record[5] }}" class="toedit" readonly="readonly">]
+                                </td>
+                            </tr>                     
+                            <tr>
+                                <th scope="row"><span class="record-label">Morphology</span></th>
+                                <td class="edit" title="Double-click to edit">
+                                    <span>{{ record[6] }}</span>
+                                    <input type="text" name="morphology" value="{{ record[6] }}" class="toedit" readonly="readonly">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><span class="record-label">Etymology</span></th>
+                                <td class="edit" title="Double-click to edit">
+                                    <span>{{ record[7] }}</span>
+                                    <input type="text" name="etymology" value="{{ record[7] }}" class="toedit" readonly="readonly">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><span class="record-label">Literal meaning</span></th>
+                                <td class="edit" title="Double-click to edit">
+                                    <span>{{ record[8] }}</span>
+                                    <input type="text" name="literal" value="{{ record[8] }}" class="toedit" readonly="readonly">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><span class="record-label">Example</span></th>
+                                <td class="edit" title="Double-click to edit">
+                                    <i><span>{{ record[9] }}</span>
+                                    <input type="text" name="example" value="{{ record[9] }}" class="toedit" readonly="readonly"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                        
+                    </table> 
+                    <div class="btn-cenetered-div">
+                        <span class="success">{{ info }}</span>
+                    </div>
+                    <div class="btn-cenetered-div">
+                        <button type="submit" class="btn medium-btn btn-success mt-2" id="saveRecord">Save</button>
+                        <button type="submit" class="btn medium-btn btn-success mt-2" id="deleteRecord">Delete</button>
+                    </div>
+                </div>
+            </form>
+
+            {% else %}
+                <p>
+                    Select a word in the panel on the left.
+                </p>
+            {% endif %}
+   
+            
+        </div>
+    </div>
+</div>
+
+<script>
+
+// Script that enables editing a selected field
+
+$(".edit").on("dblclick", "input, select", function(){
+    $(this)
+    .prop("readonly", false)
+    .removeClass("toedit")
+    .siblings("span").hide();
+});
+
+$(".edit").on("blur", "input, select", function(){
+    $(this)
+    .prop("readonly", true)
+    .addClass("toedit")
+    .siblings("span").text($(this).val()).show();
+});
+
+$("#editRecord").on("click", "td", function(){
+    $(".edit").children().focus();
+});
+
+</script>
+
+{% endblock %}
