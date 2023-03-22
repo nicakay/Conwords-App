@@ -22,6 +22,11 @@ Dictionary
 
             {% if record is not none %}
 
+            <div class="btn-cenetered-div">
+                <button type="button" class="btn">Prev</button>
+                <button type="button" class="btn">Next</button>
+            </div>
+
             <form action="/dictionary" method="post">
                 <div class="record">
                     <table class="table table-hover table-striped">
@@ -104,8 +109,8 @@ Dictionary
                         <span class="success">{{ info }}</span>
                     </div>
                     <div class="btn-cenetered-div">
-                        <button type="submit" class="btn medium-btn btn-success mt-2" id="saveRecord">Save</button>
-                        <button type="submit" class="btn medium-btn btn-success mt-2" id="deleteRecord">Delete</button>
+                        <button type="submit" name="formsubmit" class="btn medium-btn btn-success mt-2" value="Save">Save</button>
+                        <button type="submit" name="formsubmit" class="btn medium-btn btn-danger mt-2" id="deleteRecord" value="Delete">Delete</button>
                     </div>
                 </div>
             </form>
@@ -120,6 +125,29 @@ Dictionary
         </div>
     </div>
 </div>
+
+
+{% if show_modal %}
+  
+  <!-- Modal -->
+    <div class="infoModal" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel">
+        <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="infoModalLabel"><strong><span class="error">Entry deleted</span></strong></h5>
+            </div>
+            <div class="modal-body">
+                <span>The word <b>{{ word_to_delete }}</b> has been deleted</span><br/>
+                from the dictionary</span> 
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="$('#infoModal').hide()">Ok</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
+{% endif %}
 
 <script>
 

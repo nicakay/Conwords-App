@@ -257,7 +257,7 @@ def dictionary():
 
     # Display links for each entry on the left
     words = db.execute("SELECT entries.id, word, abbreviation FROM entries, words, parts_of_speech WHERE entries.word_id = words.id AND entries.part_of_speech_id = parts_of_speech.id AND entries.user_id = ? ORDER BY word;", (session["user_id"],)).fetchall()
-    
+
     # Details of each entry after clicking a link
     if request.method == "GET":
         entry_id = str(request.args.get('value'))
@@ -265,20 +265,28 @@ def dictionary():
         record = db.execute("SELECT * FROM entries WHERE id = ? AND user_id = ?;", (entry_id, session["user_id"],)).fetchone()
         if not record == None:
             session["record"] = record
+
             word = db.execute("SELECT word FROM words WHERE id = ? AND user_id = ?;", (record[1], session["user_id"],)).fetchone()[0]
             session["word"] = word
+            session["word_id"] = str(record[1])
+
             meaning = db.execute("SELECT meaning FROM meanings WHERE id = ? AND user_id = ?;", (record[2], session["user_id"],)).fetchone()[0]
             session["meaning"] = meaning
+            session["meaning_id"] = str(record[2])
+
             part_of_speech = db.execute("SELECT part_of_speech FROM parts_of_speech WHERE id = ? AND user_id = ?;", (record[3], session["user_id"],)).fetchone()[0]
             session["pos"] = part_of_speech
             part_of_speech_abbr = db.execute("SELECT abbreviation FROM parts_of_speech WHERE id = ? AND user_id = ?;", (record[3], session["user_id"],)).fetchone()[0]
             session["pos_abbr"] = part_of_speech_abbr
-            gender_abbr = db.execute("SELECT abbreviation FROM grammatical_genders WHERE id = ? AND user_id = ?;", (record[4], session["user_id"],)).fetchone()
-            gender = db.execute("SELECT grammatical_gender FROM grammatical_genders WHERE id = ? AND user_id = ?;", (record[4], session["user_id"],)).fetchone()
-            if not gender == None:
-                gender = gender[0]
-                session["gender"] = gender
-                session["gender_abbr"] = gender_abbr
+
+            if not record[4] == None:
+                gender = db.execute("SELECT grammatical_gender FROM grammatical_genders WHERE id = ? AND user_id = ?;", (record[4], session["user_id"],)).fetchone()[0]
+                gender_abbr = db.execute("SELECT abbreviation FROM grammatical_genders WHERE id = ? AND user_id = ?;", (record[4], session["user_id"],)).fetchone()         
+            else:             
+                gender = ""
+                gender_abbr = ""
+            session["gender"] = gender
+            session["gender_abbr"] = gender_abbr
 
             session["phonetic"] = record[5]
             session["morphology"] = record[6]
@@ -295,138 +303,159 @@ def dictionary():
             gender_abbr = ["empty"]
 
 
-    # On POS when pressing the 'Save' button
+    # On POS
     else:
 
-        # Connect to the database
-        db = get_db()
+        # If the user presses 'Save'
+        if request.form["formsubmit"] == "Save":
+            # Connect to the database
+            db = get_db()
 
-        # Get data from all the editable fields
-        edited_pos = request.form.get("pos")
-        edited_gender = request.form.get("gender")
-        edited_meaning = request.form.get("meaning")
-        edited_phonetic = request.form.get("phonetic")
-        edited_morphology = request.form.get("morphology")
-        edited_etymology = request.form.get("etymology")
-        edited_literal = request.form.get("literal")
-        edited_example = request.form.get("example")
+            # Get data from all the editable fields
+            edited_pos = request.form.get("pos")
+            edited_gender = request.form.get("gender")
+            edited_meaning = request.form.get("meaning")
+            edited_phonetic = request.form.get("phonetic")
+            edited_morphology = request.form.get("morphology")
+            edited_etymology = request.form.get("etymology")
+            edited_literal = request.form.get("literal")
+            edited_example = request.form.get("example")
 
-        # If the user changed 'part of speech'
-        if edited_pos != session["pos"]:
+            # If the user changed 'part of speech'
+            if edited_pos != session["pos"]:
 
-            # Verify if the entered 'part_of_speech' exists
-            # Fetch all the 'parts of speech' stored in the databse
-            pos_tuples = db.execute("SELECT part_of_speech FROM parts_of_speech WHERE user_id = ?;", (session["user_id"],)).fetchall()
-            # Convert the list of tuples into a list using itertools convertion
-            pos_list = list(itertools.chain(*pos_tuples))
+                # Verify if the entered 'part_of_speech' exists
+                # Fetch all the 'parts of speech' stored in the databse
+                pos_tuples = db.execute("SELECT part_of_speech FROM parts_of_speech WHERE user_id = ?;", (session["user_id"],)).fetchall()
+                # Convert the list of tuples into a list using itertools convertion
+                pos_list = list(itertools.chain(*pos_tuples))
 
-            # If the value gave by the user is in that list
-            if edited_pos in pos_list:
+                # If the value gave by the user is in that list
+                if edited_pos in pos_list:
 
-                # Commit the change in the database
-                db.execute("UPDATE entries SET part_of_speech_id = (SELECT id FROM parts_of_speech WHERE part_of_speech = ?) WHERE id = ?;", (edited_pos, session["entry_id"]))
-                db.commit()
+                    # Commit the change in the database
+                    db.execute("UPDATE entries SET part_of_speech_id = (SELECT id FROM parts_of_speech WHERE part_of_speech = ?) WHERE id = ?;", (edited_pos, session["entry_id"]))
+                    db.commit()
 
-                # And save the 'part of speech' info to display it on the page once the record is updated 
-                part_of_speech = edited_pos
-                part_of_speech_abbr = db.execute("SELECT abbreviation FROM parts_of_speech WHERE part_of_speech = ?;", (part_of_speech,)).fetchone()[0]
+                    # And save the 'part of speech' info to display it on the page once the record is updated 
+                    part_of_speech = edited_pos
+                    part_of_speech_abbr = db.execute("SELECT abbreviation FROM parts_of_speech WHERE part_of_speech = ?;", (part_of_speech,)).fetchone()[0]
 
-            # If the user value is not in the database
+                # If the user value is not in the database
+                else:
+                    # Create an error message
+                    error = f"The entered part of speech: '{edited_pos}' does not exist. Please check your settings"
+                    # Send that error to the error template
+                    return render_template("dict_error.html", words=words, error=error)
+            
             else:
-                # Create an error message
-                error = f"The entered part of speech: {edited_pos} does not exist. Please check your settings"
-                # Send that error to the error template
-                return render_template("dict_error.html", words=words, error=error)
+                part_of_speech = session["pos"]
+                part_of_speech_abbr = session["pos_abbr"]
+
+            # If the user changed 'grammatical gender'
+            if not session["gender"] == None and edited_gender != session["gender"]:
+
+                # Verify if the entered 'grammatical_gender' exists
+                # Fetch all the 'grammatical genders' stored in the databse
+                genders_tuples = db.execute("SELECT grammatical_gender FROM grammatical_genders WHERE user_id = ?;", (session["user_id"],)).fetchall()
+                # Convert the list of tuples into a list using itertools convertion
+                genders_list = list(itertools.chain(*genders_tuples))
+
+                # If the value gave by the user is in that list
+                if edited_gender in genders_list:
+
+                    # Commit the change in the database
+                    db.execute("UPDATE entries SET grammatical_gender_id = (SELECT id FROM grammatical_genders WHERE grammatical_gender = ?) WHERE id = ?;", (edited_gender, session["entry_id"]))
+                    db.commit()
+
+                    # And save the 'gender' info to display it on the page once the record is updated 
+                    gender = edited_gender
+                    gender_abbr = db.execute("SELECT abbreviation FROM grammatical_genders WHERE grammatical_gender = ?;", (gender,)).fetchone()[0]
+
+                # If the user value is not in the database
+                else:
+                    # Create an error message
+                    error = f"The entered grammatical gender: '{edited_gender}' does not exist. Please check your settings"
+                    # Send that error to the error template
+                    return render_template("dict_error.html", words=words, error=error)
+            else:
+                gender = session["gender"]
+                gender_abbr = session["gender_abbr"]
+
+            # If the user changed 'meaning'
+            if edited_meaning != session["meaning"]:
+                db.execute("UPDATE meanings SET meaning = ? WHERE id IN (SELECT meaning_id FROM entries WHERE id = ?);", (edited_meaning, session["entry_id"]))
+                db.commit()
+                meaning = edited_meaning
+            else:
+                meaning = session["meaning"]
+
+            # If the user changed 'phonetic form'
+            if edited_phonetic != session["phonetic"]:
+                db.execute("UPDATE entries SET phonetic_form = ? WHERE id = ?;", (edited_phonetic, session["entry_id"]))
+                db.commit()
+                phonetic = edited_phonetic
+            else:
+                phonetic = session["phonetic"]
+
+            # If the user changed 'morphology'
+            if edited_morphology != session["morphology"]:
+                db.execute("UPDATE entries SET morphology = ? WHERE id = ?;", (edited_morphology, session["entry_id"]))
+                db.commit()
+                morphology = edited_morphology
+            else:
+                morphology = session["morphology"]
+
+            # If the user changed 'etymology'
+            if edited_etymology != session["etymology"]:
+                db.execute("UPDATE entries SET etymology = ? WHERE id = ?;", (edited_etymology, session["entry_id"]))
+                db.commit()
+                etymology = edited_etymology
+            else:
+                etymology = session["etymology"]
+
+            # If the user changed 'literal meaning'
+            if edited_literal != session["literal"]:
+                db.execute("UPDATE entries SET literal_meaning = ? WHERE id = ?;", (edited_literal, session["entry_id"]))
+                db.commit()
+                literal = edited_literal
+            else:
+                literal = session["literal"]
+
+            # If the user changed 'example'
+            if edited_example != session["example"]:
+                db.execute("UPDATE entries SET example = ? WHERE id = ?;", (edited_example, session["entry_id"]))
+                db.commit()
+                example = edited_example
+            else:
+                example = session["example"]
+
+            record = (None, None, None, None, None, phonetic, morphology, etymology, literal, example)
+            word = session["word"]
+            info = "The record has been updated"
         
-        else:
-            part_of_speech = session["pos"]
-            part_of_speech_abbr = session["pos_abbr"]
+            db.close()
 
-        # If the user changed 'grammatical gender'
-        if not session["gender"] == None and edited_gender != session["gender"]:
+            return render_template("dictionary.html", record=record, word=word, meaning=meaning, part_of_speech=part_of_speech, words=words, gender=gender, part_of_speech_abbr=part_of_speech_abbr, gender_abbr=gender_abbr, info=info)
+        
+        # If the user click the 'Delete' button
+        elif request.form["formsubmit"] == "Delete":
+            # Save the word to pass it to the info modal
+            word_to_delete = session["word"]
 
-            # Verify if the entered 'grammatical_gender' exists
-            # Fetch all the 'grammatical genders' stored in the databse
-            genders_tuples = db.execute("SELECT grammatical_gender FROM grammatical_genders WHERE user_id = ?;", (session["user_id"],)).fetchall()
-            # Convert the list of tuples into a list using itertools convertion
-            genders_list = list(itertools.chain(*genders_tuples))
-
-            # If the value gave by the user is in that list
-            if edited_gender in genders_list:
-
-                # Commit the change in the database
-                db.execute("UPDATE entries SET grammatical_gender_id = (SELECT id FROM grammatical_genders WHERE grammatical_gender = ?) WHERE id = ?;", (edited_gender, session["entry_id"]))
-                db.commit()
-
-                # And save the 'gender' info to display it on the page once the record is updated 
-                gender = edited_gender
-                gender_abbr = db.execute("SELECT abbreviation FROM grammatical_genders WHERE grammatical_gender = ?;", (gender,)).fetchone()[0]
-
-            # If the user value is not in the database
-            else:
-                # Create an error message
-                error = f"The entered grammatical gender: {edited_gender} does not exist. Please check your settings"
-                # Send that error to the error template
-                return render_template("dict_error.html", words=words, error=error)
-        else:
-            gender = session["gender"]
-            gender_abbr = session["gender_abbr"]
-
-        # If the user changed 'meaning'
-        if edited_meaning != session["meaning"]:
-            db.execute("UPDATE meanings SET meaning = ? WHERE id IN (SELECT meaning_id FROM entries WHERE id = ?);", (edited_meaning, session["entry_id"]))
+            # Delete the entry from the 'entries' table
+            db.execute("DELETE FROM entries WHERE word_id = ? AND meaning_id = ?;", (session["word_id"], session["meaning_id"]))
             db.commit()
-            meaning = edited_meaning
-        else:
-            meaning = session["meaning"]
 
-        # If the user changed 'phonetic form'
-        if edited_phonetic != session["phonetic"]:
-            db.execute("UPDATE entries SET phonetic_form = ? WHERE id = ?;", (edited_phonetic, session["entry_id"]))
+            # Delete the word from the 'words' table
+            db.execute("DELETE FROM words WHERE id = ?;", (session["word_id"]))
             db.commit()
-            phonetic = edited_phonetic
-        else:
-            phonetic = session["phonetic"]
 
-        # If the user changed 'morphology'
-        if edited_morphology != session["morphology"]:
-            db.execute("UPDATE entries SET morphology = ? WHERE id = ?;", (edited_morphology, session["entry_id"]))
+            # Delete the meaning from the 'meanings' table
+            db.execute("DELETE FROM meanings WHERE id = ?;", (session["meaning_id"]))
             db.commit()
-            morphology = edited_morphology
-        else:
-            morphology = session["morphology"]
 
-        # If the user changed 'etymology'
-        if edited_etymology != session["etymology"]:
-            db.execute("UPDATE entries SET etymology = ? WHERE id = ?;", (edited_etymology, session["entry_id"]))
-            db.commit()
-            etymology = edited_etymology
-        else:
-            etymology = session["etymology"]
-
-        # If the user changed 'literal meaning'
-        if edited_literal != session["literal"]:
-            db.execute("UPDATE entries SET literal_meaning = ? WHERE id = ?;", (edited_literal, session["entry_id"]))
-            db.commit()
-            literal = edited_literal
-        else:
-            literal = session["literal"]
-
-        # If the user changed 'example'
-        if edited_example != session["example"]:
-            db.execute("UPDATE entries SET example = ? WHERE id = ?;", (edited_example, session["entry_id"]))
-            db.commit()
-            example = edited_example
-        else:
-            example = session["example"]
-
-        record = (None, None, None, None, None, phonetic, morphology, etymology, literal, example)
-        word = session["word"]
-        info = "The record has been updated"
-      
-        db.close()
-
-        return render_template("dictionary.html", record=record, word=word, meaning=meaning, part_of_speech=part_of_speech, words=words, gender=gender, part_of_speech_abbr=part_of_speech_abbr, gender_abbr=gender_abbr, info=info)
+            return render_template("dictionary.html", words=words, word_to_delete=word_to_delete, show_modal=True, record=None)
         
     db.close()
 
@@ -442,11 +471,6 @@ def word_generator():
 
     generated_words = []
 
-    """
-    if session["generated_words"] == None:
-        generated_words = session["generated_words"]
-        """
-    
     # Get all the beginnings
     def getBeginnings(style):
         b_list = db.execute("SELECT word_part FROM word_parts WHERE style_id = ? AND position_id = ?;", (style, 1,)).fetchall()
@@ -462,6 +486,7 @@ def word_generator():
         e_list = db.execute("SELECT word_part FROM word_parts WHERE style_id = ? AND position_id = ?;", (style, 3,)).fetchall()
         return e_list
 
+    # If the user clicks 'Generate'
     if request.method == "POST":
         try:
             if request.form["style"] == "dalishStyle2":
