@@ -1,4 +1,4 @@
-22/03/2023
+(Ver 02) 22/03/2023
 
 Dictionary:
 - Fixed: Some words had 'part of speech' equal to NULL, which generate errors as this is a none-null field.
@@ -8,7 +8,7 @@ Dictionary:
 Upon this change the database became now fully functional to a user, who can now create, modify and delete their entries.
 
 
-21/03/2023
+(Ver 01) 21/03/2023
 
 Dictionary:
 - Changed: Moved the 'part of speech' and 'grammatical gender' abbreviations so they now addtionaly display on the right side of the dictionary word
