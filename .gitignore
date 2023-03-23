@@ -1,0 +1,11 @@
+# Python cache files #
+######################
+__pycache__/
+
+# Flask session files #
+######################
+flask_session/
+
+# OS generated files #
+######################
+.DS_Store

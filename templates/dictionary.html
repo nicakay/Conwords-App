@@ -129,7 +129,8 @@ Dictionary
 
 {% if show_modal %}
   
-    <div class="infoModal" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel">
+<div class="overlay">
+    <div class="infoModal medium-height-modal" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel">
         <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -140,11 +141,12 @@ Dictionary
                 from the dictionary</span> 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="$('#infoModal').hide()">Ok</button>
+                <button type="button" class="btn btn-secondary" onclick="$('#infoModal').hide(); $('.overlay').hide()">Ok</button>
             </div>
         </div>
         </div>
     </div>
+</div>
 
 {% endif %}
 

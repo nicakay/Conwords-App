@@ -450,11 +450,11 @@ def dictionary():
             db.commit()
 
             # Delete the word from the 'words' table
-            db.execute("DELETE FROM words WHERE id = ?;", (session["word_id"]))
+            db.execute("DELETE FROM words WHERE id = ?;", (session["word_id"],))
             db.commit()
 
             # Delete the meaning from the 'meanings' table
-            db.execute("DELETE FROM meanings WHERE id = ?;", (session["meaning_id"]))
+            db.execute("DELETE FROM meanings WHERE id = ?;", (session["meaning_id"],))
             db.commit()
 
             return render_template("dictionary.html", words=words, word_to_delete=word_to_delete, show_modal=True, record=None)
