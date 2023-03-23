@@ -89,31 +89,30 @@ def register():
         # Save the password in a variable
         password = request.form.get("password")
 
-        if validate_password(password) == True:
-            # Open DB connection
-            #db = get_db().cursor()
-            db = get_db()
+        # if validate_password(password) == True:
+        # Open DB connection
+        db = get_db()
 
-            # Check if that username already exists
-            username = request.form.get("username")
-            results = db.execute("SELECT * FROM users WHERE username = ?", (username, )).fetchall()
+        # Check if that username already exists
+        username = request.form.get("username")
+        results = db.execute("SELECT * FROM users WHERE username = ?", (username, )).fetchall()
 
-            # If the user already exists
-            if len(results) == 1:
-                notification_error = "The user already exists"
-                db.close()
-                return render_template("register.html", notification_error = notification_error)
+        # If the user already exists
+        if len(results) == 1:
+            notification_error = "The user already exists"
+            db.close()
+            return render_template("register.html", notification_error = notification_error)
 
-            else:
-                # Hash the password and the user into the database
-                password_hash = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
-                print(password_hash)
-                db.execute("INSERT INTO users (username, hash) VALUES (?, ?);", (username, password_hash))
-                db.commit()
-                # Close DB connection
-                db.close()
+        else:
+            # Hash the password and the user into the database
+            password_hash = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
+            print(password_hash)
+            db.execute("INSERT INTO users (username, hash) VALUES (?, ?);", (username, password_hash))
+            db.commit()
+            # Close DB connection
+            db.close()
 
-                return redirect("/")
+            return render_template("login.html", show_modal=True, account=username)
         
 
     return render_template("register.html")
@@ -199,10 +198,13 @@ def add_word():
     db = get_db()
 
     # Display links for each entry on the left
-    words = db.execute("SELECT entries.id, word FROM entries, words WHERE entries.word_id = words.id AND entries.user_id = ? ORDER BY word;", (session["user_id"],)).fetchall()
+    words = db.execute("SELECT entries.id, word, abbreviation FROM entries, words, parts_of_speech WHERE entries.word_id = words.id AND entries.part_of_speech_id = parts_of_speech.id AND entries.user_id = ? ORDER BY word;", (session["user_id"],)).fetchall()
 
     pos_list = db.execute("SELECT part_of_speech FROM parts_of_speech WHERE user_id = ?;", (session["user_id"],)).fetchall()
     gram_gender_list = db.execute("SELECT grammatical_gender FROM grammatical_genders WHERE user_id = ?;", (session["user_id"], )).fetchall()
+
+    if len(pos_list) == 0:
+        return render_template("addword.html", pos_list=pos_list, gram_gender_list=gram_gender_list, words=words, pos_list_empty=True)
 
     if request.method == "POST":
         # Get the user inputs from all the fields
