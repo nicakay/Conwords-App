@@ -1,3 +1,10 @@
+(v1.04) 24/03/2023
+
+Generator:
+- Changed: Separated names of styles and numbers of syllables into two separate sections of radio buttons.
+- Added: Dwemeris language style
+
+
 (v1.03) 23/03/2023
 
 Register, Login:
@@ -5,6 +12,7 @@ Register, Login:
 
 Add Word:
 - Added: If a new user opens this page without having any parts of speech added yet, the form will be blocked by a pop up - 'The Part of speech cannot be empty. Please check your Settings' - which links to settings.html
+
 
 (v1.02) 22/03/2023
 

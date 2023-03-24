@@ -490,64 +490,80 @@ def word_generator():
 
     # If the user clicks 'Generate'
     if request.method == "POST":
-        try:
-            if request.form["style"] == "dalishStyle2":
-                for _ in range(10):
-                    b_list = getBeginnings(1)
-                    m_list = getMLiddles(1)
-                    e_list = getEndings(1)
-                    beginnnig = random.choice(b_list)[0]
-                    end = random.choice(e_list)[0]
-                    word = beginnnig + end
 
-                    generated_words.append(word)
+        style = 0
 
-                    session["style"] = request.form["style"]
+        if request.form["style"] == "dalishStyle":
+            style = 1
 
-            elif request.form["style"] == "dalishStyle3":
-                for _ in range(10):
-                    b_list = getBeginnings(1)
-                    m_list = getMLiddles(1)
-                    e_list = getEndings(1)
-                    beginnnig = random.choice(b_list)[0]
-                    middle = random.choice(m_list)[0]
-                    end = random.choice(e_list)[0]
-                    word = beginnnig + middle + end
+        elif request.form["style"] == "dwemerisStyle":
+            style = 2
+      
+        if request.form["syllables"] == "twoSyllables":
+            for _ in range(10):
+                b_list = getBeginnings(style)
+                m_list = getMLiddles(style)
+                e_list = getEndings(style)
+                beginnnig = random.choice(b_list)[0]
+                end = random.choice(e_list)[0]
+                word = beginnnig + end
 
-                    generated_words.append(word)
+                generated_words.append(word)
 
-                    session["style"] = request.form["style"]
-                    
-            elif request.form["style"] == "dalishStyle4":
-                for _ in range(10):
-                    b_list = getBeginnings(1)
-                    m_list = getMLiddles(1)
-                    e_list = getEndings(1)
-                    beginnnig = random.choice(b_list)[0]
-                    middle1 = random.choice(m_list)[0]
-                    middle2 = random.choice(m_list)[0]
-                    end = random.choice(e_list)[0]
-                    word = beginnnig + middle1 + middle2 + end
+                session["style"] = request.form["style"]
+                session["syllables"] = request.form["syllables"]
 
-                    generated_words.append(word)
+        elif request.form["syllables"] == "threeSyllables":
+            for _ in range(10):
+                b_list = getBeginnings(style)
+                m_list = getMLiddles(style)
+                e_list = getEndings(style)
+                beginnnig = random.choice(b_list)[0]
+                middle = random.choice(m_list)[0]
+                end = random.choice(e_list)[0]
+                word = beginnnig + middle + end
 
-                    session["style"] = request.form["style"]
+                generated_words.append(word)
 
-            session["generated_words"] = generated_words
+                session["style"] = request.form["style"]
+                session["syllables"] = request.form["syllables"]
+                
+        elif request.form["syllables"] == "fourSyllables":
+            for _ in range(10):
+                b_list = getBeginnings(style)
+                m_list = getMLiddles(style)
+                e_list = getEndings(style)
+                beginnnig = random.choice(b_list)[0]
+                middle1 = random.choice(m_list)[0]
+                middle2 = random.choice(m_list)[0]
+                end = random.choice(e_list)[0]
+                word = beginnnig + middle1 + middle2 + end
 
-        except KeyError:
-            print("There was a key error in the generator template")
+                generated_words.append(word)
+
+                session["style"] = request.form["style"]
+                session["syllables"] = request.form["syllables"]
+
+        else:
             return render_template("word-generator.html")
+
+        session["generated_words"] = generated_words
+
+        #except KeyError:
+            #print("There was a key error in the generator template")
+            #return render_template("word-generator.html")
         
     db.close()
 
     # Saves the chosen_style in order to pass it to the JS script
     try:
-        if not session["style"] == None:
+        if not session["style"] == None and not session["syllables"] == None:
             chosen_style = session["style"]
+            chosen_syllables = session["syllables"]
         else:
             chosen_style = "Undefined"
+            chosen_syllables = "Undefined"
     except KeyError:
         return render_template("word-generator.html")
 
-    return render_template("word-generator.html", generated_words=generated_words, chosen_style=chosen_style)
+    return render_template("word-generator.html", generated_words=generated_words, chosen_style=chosen_style, chosen_syllables=chosen_syllables)
