@@ -8,13 +8,26 @@ Dictionary
 
 <div class="row mainrow">
     <div class="col-sm-4 left-menu">
+        <div class="search">
+            <form action="/dictionary" method="get" class="d-flex">
+                <input type="search" class="form-control search-input" name="search" placeholder="Search...">
+                <button type="submit" class="btn btn-list btn-success search-btn">Search</button>
+            </form>
+        </div>
         <div class="dict-display" id="dictdiv">
-            <h4><strong>Browse</strong></h4>
 
-            {% for word in words %}
-                <a class="dict-link" name="word-link" href="/dictionary?value={{ word[0] }}">{{ word[1] }} <span class="abbr">{{ word[2] }}</span></a><br/>
-            {% endfor %}
-
+            <div class="dict-view">
+                {% for word in words %}
+                    <a class="dict-link" name="word-link" href="/dictionary?value={{ word[0] }}">{{ word[1] }} <span class="abbr">{{ word[2] }}</span></a><br/>
+                {% endfor %}
+            </div>
+            
+            <div class="search-view">
+                {% for word in results %}
+                    <a class="dict-link" name="word-link" href="/dictionary?value={{ word[0] }}">{{ word[1] }} <span class="abbr">{{ word[2] }}</span></a><br/>
+                {% endfor %}
+            </div>
+            
         </div>
     </div>
     <div class="col-sm-8">
@@ -70,7 +83,7 @@ Dictionary
                             <tr>
                                 <th scope="row"><span class="record-label">Phonetic form</span></th>
                                 <td class="edit" title="Double-click to edit">
-                                    [<span>{{ record[5] }}</span>
+                                    [ <span>{{ record[5] }}</span>
                                     <input type="text" name="phonetic" value="{{ record[5] }}" class="toedit" readonly="readonly">]
                                 </td>
                             </tr>                     
@@ -109,7 +122,7 @@ Dictionary
                         <span class="success">{{ info }}</span>
                     </div>
                     <div class="btn-cenetered-div">
-                        <button type="submit" name="formsubmit" class="btn medium-btn btn-success mt-2" value="Save">Save</button>
+                        <button type="submit" name="formsubmit" class="btn medium-btn btn-success mt-2" id="saveRecord" value="Save" disabled>Save</button>
                         <button type="submit" name="formsubmit" class="btn medium-btn btn-danger mt-2" id="deleteRecord" value="Delete">Delete</button>
                     </div>
                 </div>
@@ -151,27 +164,10 @@ Dictionary
 {% endif %}
 
 <script>
-
-// Script that enables editing a selected field
-
-$(".edit").on("dblclick", "input, select", function(){
-    $(this)
-    .prop("readonly", false)
-    .removeClass("toedit")
-    .siblings("span").hide();
-});
-
-$(".edit").on("blur", "input, select", function(){
-    $(this)
-    .prop("readonly", true)
-    .addClass("toedit")
-    .siblings("span").text($(this).val()).show();
-});
-
-$("#editRecord").on("click", "td", function(){
-    $(".edit").children().focus();
-});
-
+    $(".search-btn").on("click", function() {
+        /*event.preventDefault();*/
+        $(".dict-view").hide();
+    });
 </script>
 
 {% endblock %}

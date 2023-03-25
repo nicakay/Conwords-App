@@ -1,3 +1,15 @@
+(v1.05) 25/03/2023
+
+Register:
+- Added: Password validation (both fields: 'password' and 'confirmation', password length minimum 6 characters and that it should contain at least one number
+
+Dictionary:
+- Changed: The 'Save' button is now disabled by default and gets unabled as soon as a user enters the edit more. It then gets disabled again after saving the record
+- Added: Started implementing a search module
+
+Generator:
+- Added: Huttese language style
+
 (v1.04) 24/03/2023
 
 Generator:

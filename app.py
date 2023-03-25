@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, session
 from flask_session import Session
 import random
 from werkzeug.security import check_password_hash, generate_password_hash
-from helpers import get_db, login_required, validate_password
+from helpers import get_db, login_required
 import itertools
 
 # Configure application
@@ -86,10 +86,22 @@ def register():
         # Define 'error' - variable for displaying errors
         notification_error = ""
 
-        # Save the password in a variable
+        # Save the password and the password confirmation in variables
         password = request.form.get("password")
+        pass_confirmation = request.form.get("confirmation")
 
-        # if validate_password(password) == True:
+        if not password == pass_confirmation:
+            notification_error = "The passwords are not the same"
+            return render_template("register.html", notification_error = notification_error)
+        
+        elif len(password) < 6:
+            notification_error = "The passwords should be at least 8 characters"
+            return render_template("register.html", notification_error = notification_error)
+        
+        elif not any(char.isdigit() for char in password):
+            notification_error = "The passwords should contain at least one number"
+            return render_template("register.html", notification_error = notification_error)
+
         # Open DB connection
         db = get_db()
 
@@ -260,8 +272,13 @@ def dictionary():
     # Display links for each entry on the left
     words = db.execute("SELECT entries.id, word, abbreviation FROM entries, words, parts_of_speech WHERE entries.word_id = words.id AND entries.part_of_speech_id = parts_of_speech.id AND entries.user_id = ? ORDER BY word;", (session["user_id"],)).fetchall()
 
-    # Details of each entry after clicking a link
     if request.method == "GET":
+
+        # Search module
+        searched = str(request.args.get('search'))
+        results = db.execute("SELECT entries.id, word, abbreviation FROM entries, words, parts_of_speech WHERE entries.word_id = words.id AND entries.part_of_speech_id = parts_of_speech.id AND entries.user_id = ? AND word LIKE ? ORDER BY word;", (session["user_id"], "%" + searched + "%",)).fetchall()
+
+        # Details of each entry after clicking a link
         entry_id = str(request.args.get('value'))
         session["entry_id"] = entry_id
         record = db.execute("SELECT * FROM entries WHERE id = ? AND user_id = ?;", (entry_id, session["user_id"],)).fetchone()
@@ -461,7 +478,7 @@ def dictionary():
         
     db.close()
 
-    return render_template("dictionary.html", record=record, word=word, meaning=meaning, part_of_speech=part_of_speech, part_of_speech_abbr=part_of_speech_abbr, gender_abbr=gender_abbr, words=words, gender=gender)
+    return render_template("dictionary.html", record=record, word=word, meaning=meaning, part_of_speech=part_of_speech, part_of_speech_abbr=part_of_speech_abbr, gender_abbr=gender_abbr, words=words, gender=gender, results=results)
 
 
 @app.route("/word-generator", methods=["GET", "POST"])
@@ -487,71 +504,80 @@ def word_generator():
     def getEndings(style):
         e_list = db.execute("SELECT word_part FROM word_parts WHERE style_id = ? AND position_id = ?;", (style, 3,)).fetchall()
         return e_list
-
+    
     # If the user clicks 'Generate'
     if request.method == "POST":
 
         style = 0
 
-        if request.form["style"] == "dalishStyle":
-            style = 1
+        try:
 
-        elif request.form["style"] == "dwemerisStyle":
-            style = 2
+            if request.form["style"] == "dalishStyle":
+                style = 1
+
+            elif request.form["style"] == "dwemerisStyle":
+                style = 2
+
+            elif request.form["style"] == "hutteseStyle":
+                style = 3
+
+        except KeyError:
+
+            print("Hello!")
+            return render_template("word-generator.html")
+        
+        try:
       
-        if request.form["syllables"] == "twoSyllables":
-            for _ in range(10):
-                b_list = getBeginnings(style)
-                m_list = getMLiddles(style)
-                e_list = getEndings(style)
-                beginnnig = random.choice(b_list)[0]
-                end = random.choice(e_list)[0]
-                word = beginnnig + end
+            if request.form["syllables"] == "twoSyllables":
+                for _ in range(10):
+                    b_list = getBeginnings(style)
+                    m_list = getMLiddles(style)
+                    e_list = getEndings(style)
+                    beginnnig = random.choice(b_list)[0]
+                    end = random.choice(e_list)[0]
+                    word = beginnnig + end
 
-                generated_words.append(word)
+                    generated_words.append(word)
 
-                session["style"] = request.form["style"]
-                session["syllables"] = request.form["syllables"]
+                    session["style"] = request.form["style"]
+                    session["syllables"] = request.form["syllables"]
 
-        elif request.form["syllables"] == "threeSyllables":
-            for _ in range(10):
-                b_list = getBeginnings(style)
-                m_list = getMLiddles(style)
-                e_list = getEndings(style)
-                beginnnig = random.choice(b_list)[0]
-                middle = random.choice(m_list)[0]
-                end = random.choice(e_list)[0]
-                word = beginnnig + middle + end
+            elif request.form["syllables"] == "threeSyllables":
+                for _ in range(10):
+                    b_list = getBeginnings(style)
+                    m_list = getMLiddles(style)
+                    e_list = getEndings(style)
+                    beginnnig = random.choice(b_list)[0]
+                    middle = random.choice(m_list)[0]
+                    end = random.choice(e_list)[0]
+                    word = beginnnig + middle + end
 
-                generated_words.append(word)
+                    generated_words.append(word)
 
-                session["style"] = request.form["style"]
-                session["syllables"] = request.form["syllables"]
-                
-        elif request.form["syllables"] == "fourSyllables":
-            for _ in range(10):
-                b_list = getBeginnings(style)
-                m_list = getMLiddles(style)
-                e_list = getEndings(style)
-                beginnnig = random.choice(b_list)[0]
-                middle1 = random.choice(m_list)[0]
-                middle2 = random.choice(m_list)[0]
-                end = random.choice(e_list)[0]
-                word = beginnnig + middle1 + middle2 + end
+                    session["style"] = request.form["style"]
+                    session["syllables"] = request.form["syllables"]
+                    
+            elif request.form["syllables"] == "fourSyllables":
+                for _ in range(10):
+                    b_list = getBeginnings(style)
+                    m_list = getMLiddles(style)
+                    e_list = getEndings(style)
+                    beginnnig = random.choice(b_list)[0]
+                    middle1 = random.choice(m_list)[0]
+                    middle2 = random.choice(m_list)[0]
+                    end = random.choice(e_list)[0]
+                    word = beginnnig + middle1 + middle2 + end
 
-                generated_words.append(word)
+                    generated_words.append(word)
 
-                session["style"] = request.form["style"]
-                session["syllables"] = request.form["syllables"]
+                    session["style"] = request.form["style"]
+                    session["syllables"] = request.form["syllables"]
 
-        else:
+        except KeyError:
+
             return render_template("word-generator.html")
 
         session["generated_words"] = generated_words
-
-        #except KeyError:
-            #print("There was a key error in the generator template")
-            #return render_template("word-generator.html")
         
     db.close()
 

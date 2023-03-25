@@ -24,7 +24,7 @@
     <body>
         <header>
     
-            <h1><b>Conwords</b></h1>
+            <h1><b>ConWords</b></h1>
         
             <ul class="nav justify-content-center pb-1">
                 {% if session["user_id"] %}
@@ -43,8 +43,8 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/settings">Settings</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/logout">Log Out</a>
+                    <li class="nav-item logout">
+                        <a class="nav-link logout" href="/logout">Log Out</a>
                     </li>
                 {% else %}
                     <li class="nav-item">

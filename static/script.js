@@ -1,3 +1,32 @@
+// Script that enables editing a selected field on the 'dictionary' page
+
+$(document).ready(function() {
+
+    $(".edit").on("dblclick", "input, select", function(){
+
+        $(this)
+        .prop("readonly", false)
+        .removeClass("toedit")
+        .siblings("span").hide();
+    
+        $(saveRecord)
+        .prop("disabled", false);
+    });
+    
+    $(".edit").on("blur", "input, select", function(){
+        $(this)
+        .prop("readonly", true)
+        .addClass("toedit")
+        .siblings("span").text($(this).val()).show();
+    });
+    
+    $("#editRecord").on("click", "td", function(){
+        $(".edit").children().focus();
+    });
+
+});
+
+
 // Function to copy a word to the clipboard
 async function copyWord() {
 

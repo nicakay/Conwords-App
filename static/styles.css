@@ -36,7 +36,9 @@ header {
 }
 
 header h1 {
-    color: #0f5c95;
+    color: #547c9b;
+    font-size: 3rem;
+    padding-top: 1rem;
 }
 
 label {
@@ -45,21 +47,32 @@ label {
 
 .nav-link {
     font-weight: 600;
-    color: #e0d88f;
+    color: #ffd6b7;
+}
+
+.logout {
+    color: #f16c6f;
 }
 
 .nav li {
     border: 3px solid rgba(33, 37, 41, 0);
+    transition: border-color 0.5s;
 }
 
 .nav li:hover {
+    border: 3px solid #264233;
+    background-color: #097629;
+    border-radius: 12px;
+}
+
+.nav li.logout:hover {
     border: 3px solid #264233;
     background-color: #bb2834;
     border-radius: 12px;
 }
 
 .nav-link:hover {
-    color:#ffe3cd;
+    color:#fff5ed;
 }
 
 .container {
@@ -83,8 +96,8 @@ label {
     background-color: #f9faf3;
     height: 100%;
     padding: 1.5rem 1.5rem;
-    border-right: 3px solid #7e7e7e;
-    border-top-right-radius: 10px;
+    border-right: 2px solid #b6b6b6;
+    overflow: auto;
 }
 
 .dict-link {
@@ -267,4 +280,18 @@ table {
 
 .form-check-label {
     margin-top: 0;
+}
+
+.search {
+    background-color: #264233;
+    padding: 0 0.5rem 0.5rem 0.5rem;
+}
+
+.search-input {
+    width: 70%;
+    margin-right: 0.5rem;
+}
+
+.search-btn {
+    width: 30%;
 }
