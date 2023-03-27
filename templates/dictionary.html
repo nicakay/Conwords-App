@@ -10,24 +10,45 @@ Dictionary
     <div class="col-sm-4 left-menu">
         <div class="search">
             <form action="/dictionary" method="get" class="d-flex">
-                <input type="search" class="form-control search-input" name="search" placeholder="Search...">
-                <button type="submit" class="btn btn-list btn-success search-btn">Search</button>
+                <input type="search" autocomplete="off" class="form-control search-input" id="search-input" name="search" placeholder="Search...">
+                <button type="submit" class="btn btn-list btn-success search-btn" id="search-btn" value="Search">Search</button>
             </form>
         </div>
         <div class="dict-display" id="dictdiv">
 
-            <div class="dict-view">
-                {% for word in words %}
-                    <a class="dict-link" name="word-link" href="/dictionary?value={{ word[0] }}">{{ word[1] }} <span class="abbr">{{ word[2] }}</span></a><br/>
-                {% endfor %}
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="wordsMeaningsToggle">
+                <label class="form-check-label mb-2" for="wordsMeaningsToggle">Display meanings</label>
             </div>
+
+            <div id="left-menu-words">
+                {% if dictview != none %}
+                    <div class="dict-view">
+                        {% for word in words %}
+                            <a class="dict-link" name="word-link" href="/dictionary?value={{ word[0] }}">{{ word[1] }} <span class="abbr">{{ word[2] }}</span></a><br/>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             
-            <div class="search-view">
-                {% for word in results %}
-                    <a class="dict-link" name="word-link" href="/dictionary?value={{ word[0] }}">{{ word[1] }} <span class="abbr">{{ word[2] }}</span></a><br/>
-                {% endfor %}
+                {% if dictview is none %}
+                    <div class="search-view">
+                        {% for word in results %}
+                            <a class="dict-link" name="word-link" href="/dictionary?value={{ word[0] }}">{{ word[1] }} <span class="abbr">{{ word[2] }}</span></a><br/>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
-            
+
+            <div id="left-menu-meanings" style="display: none;">
+
+                <div class="dict-view">
+                    {% for meaning in meanings %}
+                        <a class="dict-link" name="word-link" href="/dictionary?value={{ meaning[0] }}">{{ meaning[1] }} <span class="abbr">{{ meaning[2] }}</span></a><br/>
+                    {% endfor %}
+                </div>
+
+            </div>
+   
         </div>
     </div>
     <div class="col-sm-8">
@@ -162,12 +183,4 @@ Dictionary
 </div>
 
 {% endif %}
-
-<script>
-    $(".search-btn").on("click", function() {
-        /*event.preventDefault();*/
-        $(".dict-view").hide();
-    });
-</script>
-
 {% endblock %}

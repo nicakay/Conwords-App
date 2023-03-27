@@ -1,10 +1,27 @@
+(v1.06) 27/03/2023
+
+Dictionary:
+- Added: Search module
+- Added: The word list view can be now switched between the default view (dictionary words) and the meaning view (user's translation, eg. English)
+
+Settings:
+- Added: Option to add cutsom word parts. They can be added in 'Settings' and used in 'Generator'. The user can now create 3 lists of word parts: Beginnings, Middles and Endings, and add as many word parts to each list as they want. Generator will user the word parts from the user's lists to generate new words according to the following rules:
+    - For 2-word-parts words it will use 1 random Beginning and 1 random Ending
+    - For 3-word-parts words it will use 1 random Beginning, 1 random Middle and 1 random Ending
+    - For 4-word-parts words it will use 1 random Beginning, 2 random Middles and 1 random Ending
+- Added: Added an option to delete custom word parts
+
+Generator:
+- Added: Custom style implementet in 'Settings' is now available to use in Generator
+
+
 (v1.05) 25/03/2023
 
 Register:
-- Added: Password validation (both fields: 'password' and 'confirmation', password length minimum 6 characters and that it should contain at least one number
+- Added: Password validation (it compares both fields: 'password' and 'confirmation', checks if the password length is minimum 6 characters and if it contains at least one number)
 
 Dictionary:
-- Changed: The 'Save' button is now disabled by default and gets unabled as soon as a user enters the edit more. It then gets disabled again after saving the record
+- Changed: The 'Save' button is now disabled by default and gets enabled as soon as a user enters the edit more by double-clicking any editable field. It then gets disabled again after saving the record
 - Added: Started implementing a search module
 
 Generator:

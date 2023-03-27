@@ -24,6 +24,21 @@ $(document).ready(function() {
         $(".edit").children().focus();
     });
 
+    $("#wordsMeaningsToggle").on("change", function() {
+        $("#left-menu-words").toggle();
+        $("#left-menu-meanings").toggle();
+    });
+
+});
+
+// Highlights selected word parts on the 'Settings' page
+
+$(function() {
+    $(".delete-word-part-btn").hover(function() {
+        $(this).parent().parent().css("background-color", "#b9effc")
+    }, function() {
+        $(this).parent().parent().css("background-color", "#fff")
+    });
 });
 
 

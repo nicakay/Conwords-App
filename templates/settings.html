@@ -8,14 +8,14 @@ Settings
 
 <div class="maininfo">
 
-    <h3 class="text-info mb-3"><b>Parts of Speech:</b></h3>
+    <h3 class="text-info mb-3"><b>Parts of Speech</b></h3>
     <ul class="list-group">
         {% if pos_list_empty == 1 %}
         <li class="list-group-item error">{{ pos_placeholder }}</li>
         {% else %}
             {% for part_of_speech in pos_list %}
                 <form action="/settings" method="post">
-                    <li class="list-group-item list-item-tag">{{ part_of_speech[0] }} <i>({{ part_of_speech[1] }})</i>
+                    <li class="list-group-item list-item-tag"><b>{{ part_of_speech[0] }}</b> <i>({{ part_of_speech[1] }})</i>
 
                         <input name="pos_item" value="{{ part_of_speech[0] }}" type="hidden">
                         <div class="right">
@@ -54,14 +54,14 @@ Settings
 
     <hr>
 
-    <h3 class="text-info mb-3"><b>Grammatical Genders:</b></h3>
+    <h3 class="text-info mb-3"><b>Grammatical Genders</b></h3>
     <ul class="list-group">
         {% if gram_list_empty == 1 %}
         <li class="list-group-item error">{{ gram_placeholder }}</li>
         {% else %}
             {% for gram_gender in gram_gender_list %}
                 <form action="/settings" method="post">
-                    <li class="list-group-item list-item-tag">{{ gram_gender[0] }} <i>({{ gram_gender[1] }})</i>
+                    <li class="list-group-item list-item-tag"><b>{{ gram_gender[0] }}</b> <i>({{ gram_gender[1] }})</i>
 
                         <input name="gram_gender_item" value="{{ gram_gender[0] }}" type="hidden">
                         <div class="right">
@@ -98,7 +98,141 @@ Settings
         </div>
     </form> 
 
+    <hr>
+
+
+    <h3 class="text-info mb-3"><b>Custom Generator</b></h3>
+
+    <p class="info-small">In the table below, add your custom word parts that <a href="/word-generator">Generator</a> will use to generate new words according to the following rule:
+        <ol>
+            <li class="info-small">For 2-word-parts words it will use 1 random Beginning and 1 random Ending</li>
+            <li class="info-small">For 3-word-parts words it will use 1 random Beginning, 1 random Middle and 1 random Ending</li>
+            <li class="info-small">For 4-word-parts words it will use 1 random Beginning, 2 random Middles and 1 random Ending</li>
+        </ol> 
+    </p>
+
+   
+        <div class="containter">
+            <div class="row">
+                <div class="col my-gen-settings my-gen-header">
+                    <b>Beginnigs</b>
+                </div>
+                <div class="col my-gen-settings my-gen-header">
+                    <b>Middles</b>
+                </div>
+                <div class="col my-gen-settings my-gen-header">
+                    <b>Endings</b>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col my-gen-settings my-gen-settings-input">                  
+                    <form action="/settings" method="post" class="d-flex">
+                        <input class="gen-set-input form-control" name="beginning" autocomplete="off">
+                        <button class="gen-set-btn btn right" type="submit"><b>Add</b></button>
+                    </form>  
+                </div>
+                <div class="col my-gen-settings my-gen-settings-input">
+                    <form action="/settings" method="post" class="d-flex">
+                        <input class="gen-set-input form-control" name="middle" autocomplete="off">
+                        <button class="gen-set-btn btn right" type="submit"><b>Add</b></button>
+                    </form>  
+                </div>
+                <div class="col my-gen-settings my-gen-settings-input">
+                    <form action="/settings" method="post" class="d-flex">
+                        <input class="gen-set-input form-control" name="ending" autocomplete="off">
+                        <button class="gen-set-btn btn right" type="submit"><b>Add</b></button>
+                    </form>  
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col my-gen-settings">
+                    
+                    <ul class="list-group wp-list">
+                        {% if beginnings_length == 0 %}
+                        <li class="list-group error wordpart">Add something...</li>
+                        {% else %}
+
+                            {% for beginning in beginnings %}
+                            <form action="/settings" method="post">
+                                <li class="list-group-item wordpart">{{ beginning[0] }}
+            
+                                    <input name="beginning_item" value="{{ beginning[0] }}" type="hidden">
+                                    <div class="right">
+                                        <button type="submit" class="btn delete-word-part-btn"><i class="fa-regular fa-trash-can"></i></button>
+                                    </div>
+                                    
+                                </li> 
+                            </form>
+                            {% endfor %}
+
+                        {% endif %}
+                    </ul>
+
+                </div>
+                <div class="col my-gen-settings">
+
+                    <ul class="list-group wp-list">
+                        {% if middles_length == 0 %}
+                        <li class="list-group error wordpart">Add something...</li>
+                        {% else %}
+
+                            {% for middle in middles %}
+                            <form action="/settings" method="post">
+                                <li class="list-group-item wordpart">{{ middle[0] }}
+            
+                                    <input name="middle_item" value="{{ middle[0] }}" type="hidden">
+                                    <div class="right">
+                                        <button type="submit" class="btn delete-word-part-btn"><i class="fa-regular fa-trash-can"></i></button>
+                                    </div>
+                                    
+                                </li> 
+                            </form>
+                            {% endfor %}
+
+                        {% endif %}
+                    </ul>
+
+                </div>
+                <div class="col my-gen-settings">
+
+                    <ul class="list-group wp-list">
+                        {% if endings_length == 0 %}
+                        <li class="list-group error wordpart">Add something...</li>
+                        {% else %}
+
+                            {% for ending in endings %}
+                            <form action="/settings" method="post">
+                                <li class="list-group-item wordpart">{{ ending[0] }}
+            
+                                    <input name="ending_item" value="{{ ending[0] }}" type="hidden">
+                                    <div class="right">
+                                        <button type="submit" class="btn delete-word-part-btn"><i class="fa-regular fa-trash-can"></i></button>
+                                    </div>
+                                    
+                                </li> 
+                            </form>
+                            {% endfor %}
+
+                        {% endif %}
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+    
+    
+
 </div>
+
+
+<script>
+
+
+
+</script>
+
     
 
 {% endblock main %}

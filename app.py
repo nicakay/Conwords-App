@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, session
 from flask_session import Session
+from flask_fontawesome import FontAwesome
 import random
 from werkzeug.security import check_password_hash, generate_password_hash
 from helpers import get_db, login_required
@@ -7,6 +8,7 @@ import itertools
 
 # Configure application
 app = Flask(__name__)
+fa = FontAwesome(app)
 
 # Configure session to use filesystem (instead of signed cookies)
 app.config["SESSION_PERMANENT"] = False
@@ -175,33 +177,85 @@ def settings():
         gram_placeholder = "Grammatical Genders have not been defined yet"
     else:
         gram_list_empty = 0
-        gram_placeholder = "ddd"
+        gram_placeholder = ""
+
+    beginnings_empty = 0
+    middles_empty = 0
+    endings_empty = 0
+
+    beginnings = db.execute("SELECT word_part FROM user_word_parts WHERE position_id = ? AND user_id = ? ORDER BY word_part;", (1, session["user_id"],)).fetchall()
+    beginnings_length = len(beginnings)
+    middles = db.execute("SELECT word_part FROM user_word_parts WHERE position_id = ? AND user_id = ? ORDER BY word_part;", (2, session["user_id"],)).fetchall()
+    middles_length = len(middles)
+    endings = db.execute("SELECT word_part FROM user_word_parts WHERE position_id = ? AND user_id = ? ORDER BY word_part;", (3, session["user_id"],)).fetchall()
+    endings_length = len(endings)
 
     if request.method == "POST":
+
+        # If the user adds a new part of speech
         if "partOfSpeech" in request.form:
             part_of_speech = request.form.get("partOfSpeech")
             pos_abbreviation = request.form.get("partOfSpeechAbbreviation")
-            db.execute("INSERT INTO parts_of_speech (part_of_speech, abbreviation, user_id) VALUES (?, ?, ?)", (part_of_speech, pos_abbreviation, session["user_id"]))
+            db.execute("INSERT INTO parts_of_speech (part_of_speech, abbreviation, user_id) VALUES (?, ?, ?);", (part_of_speech, pos_abbreviation, session["user_id"]))
             db.commit()
         
+        # If the users adds a new grammatical gender
         elif "gramGender" in request.form:
             gram_gender = request.form.get("gramGender")
             gram_abbreviation = request.form.get("gramGenderAbbreviation")
-            db.execute("INSERT INTO grammatical_genders (grammatical_gender, abbreviation, user_id) VALUES (?, ?, ?)", (gram_gender, gram_abbreviation, session["user_id"]))
+            db.execute("INSERT INTO grammatical_genders (grammatical_gender, abbreviation, user_id) VALUES (?, ?, ?);", (gram_gender, gram_abbreviation, session["user_id"]))
             db.commit()
 
+        # If the user deletes a part of speech
         elif "pos_item" in request.form:
             item_to_remove = request.form.get("pos_item")
-            db.execute("DELETE FROM parts_of_speech WHERE part_of_speech = ? AND user_id = ?", (item_to_remove, session["user_id"]))
+            db.execute("DELETE FROM parts_of_speech WHERE part_of_speech = ? AND user_id = ?;", (item_to_remove, session["user_id"]))
             db.commit()
 
+        # If the user deletes a grammatical gender
         elif "gram_gender_item" in request.form:
             item_to_remove = request.form.get("gram_gender_item")
-            db.execute("DELETE FROM grammatical_genders WHERE grammatical_gender = ? AND user_id = ?", (item_to_remove, session["user_id"]))
+            db.execute("DELETE FROM grammatical_genders WHERE grammatical_gender = ? AND user_id = ?;", (item_to_remove, session["user_id"]))
+            db.commit()
+
+        # If the users adds a custom word part - beginning
+        elif "beginning" in request.form:
+            beginning = request.form.get("beginning")
+            db.execute("INSERT INTO user_word_parts (user_id, position_id, word_part) VALUES (?, ?, ?);", (session["user_id"], 1, beginning))
+            db.commit()
+
+        # If the users adds a custom word part - middle
+        elif "middle" in request.form:
+            middle = request.form.get("middle")
+            db.execute("INSERT INTO user_word_parts (user_id, position_id, word_part) VALUES (?, ?, ?);", (session["user_id"], 2, middle))
+            db.commit()
+
+        # If the users adds a custom word part - ending
+        elif "ending" in request.form:
+            ending = request.form.get("ending")
+            db.execute("INSERT INTO user_word_parts (user_id, position_id, word_part) VALUES (?, ?, ?);", (session["user_id"], 3, ending))
+            db.commit()
+
+        # If the users deletes a custom word part - beginning
+        elif "beginning_item" in request.form:
+            beginning_to_remove = request.form.get("beginning_item")
+            db.execute("DELETE FROM user_word_parts WHERE word_part = ? AND user_id = ?;", (beginning_to_remove, session["user_id"]))
+            db.commit()
+
+        # If the users deletes a custom word part - middle
+        elif "middle_item" in request.form:
+            middle_to_remove = request.form.get("middle_item")
+            db.execute("DELETE FROM user_word_parts WHERE word_part = ? AND user_id = ?;", (middle_to_remove, session["user_id"]))
+            db.commit()
+
+        # If the users deletes a custom word part - ending
+        elif "ending_item" in request.form:
+            ending_to_remove = request.form.get("ending_item")
+            db.execute("DELETE FROM user_word_parts WHERE word_part = ? AND user_id = ?;", (ending_to_remove, session["user_id"]))
             db.commit()
 
     db.close()
-    return render_template("settings.html", pos_list=pos_list, gram_gender_list=gram_gender_list, pos_placeholder=pos_placeholder, gram_placeholder=gram_placeholder, pos_list_empty=pos_list_empty, gram_list_empty=gram_list_empty)
+    return render_template("settings.html", pos_list=pos_list, gram_gender_list=gram_gender_list, pos_placeholder=pos_placeholder, gram_placeholder=gram_placeholder, pos_list_empty=pos_list_empty, gram_list_empty=gram_list_empty, beginnings=beginnings, middles=middles, endings=endings, beginnings_length=beginnings_length, middles_length=middles_length, endings_length=endings_length)
 
 
 @app.route("/addword", methods=["GET", "POST"])
@@ -272,11 +326,11 @@ def dictionary():
     # Display links for each entry on the left
     words = db.execute("SELECT entries.id, word, abbreviation FROM entries, words, parts_of_speech WHERE entries.word_id = words.id AND entries.part_of_speech_id = parts_of_speech.id AND entries.user_id = ? ORDER BY word;", (session["user_id"],)).fetchall()
 
-    if request.method == "GET":
+    # Display links for each meaning on the left
+    meanings = db.execute("SELECT entries.id, meaning, abbreviation FROM entries, meanings, parts_of_speech WHERE entries.word_id = meanings.id AND entries.part_of_speech_id = parts_of_speech.id AND entries.user_id = ? ORDER BY meaning;", (session["user_id"],)).fetchall()
 
-        # Search module
-        searched = str(request.args.get('search'))
-        results = db.execute("SELECT entries.id, word, abbreviation FROM entries, words, parts_of_speech WHERE entries.word_id = words.id AND entries.part_of_speech_id = parts_of_speech.id AND entries.user_id = ? AND word LIKE ? ORDER BY word;", (session["user_id"], "%" + searched + "%",)).fetchall()
+
+    if request.method == "GET":
 
         # Details of each entry after clicking a link
         entry_id = str(request.args.get('value'))
@@ -304,6 +358,7 @@ def dictionary():
             else:             
                 gender = ""
                 gender_abbr = ""
+            
             session["gender"] = gender
             session["gender_abbr"] = gender_abbr
 
@@ -313,6 +368,21 @@ def dictionary():
             session["literal"] = record[8]
             session["example"] = record[9]
 
+        # Search module
+        elif "search" in request.args:
+
+            searched = str(request.args.get('search'))
+
+            results = db.execute("SELECT entries.id, word, abbreviation FROM entries, words, parts_of_speech WHERE entries.word_id = words.id AND entries.part_of_speech_id = parts_of_speech.id AND entries.user_id = ? AND word LIKE ? ORDER BY word;", (session["user_id"], "%" + searched + "%",)).fetchall()
+
+            # Getting 'record' value to pass it to the html
+            entry_id = str(request.args.get('value'))
+            record = db.execute("SELECT * FROM entries WHERE id = ? AND user_id = ?;", (entry_id, session["user_id"],)).fetchone()
+            
+            gender_abbr = [""]
+
+            return render_template("dictionary.html", results=results, gender_abbr=gender_abbr, record=record, dictview=None)   
+
         else:
             word = ["empty"]
             meaning = ["empty"]
@@ -320,7 +390,6 @@ def dictionary():
             part_of_speech_abbr = ["empty"]
             gender = ["empty"]
             gender_abbr = ["empty"]
-
 
     # On POS
     else:
@@ -478,7 +547,7 @@ def dictionary():
         
     db.close()
 
-    return render_template("dictionary.html", record=record, word=word, meaning=meaning, part_of_speech=part_of_speech, part_of_speech_abbr=part_of_speech_abbr, gender_abbr=gender_abbr, words=words, gender=gender, results=results)
+    return render_template("dictionary.html", record=record, word=word, meaning=meaning, part_of_speech=part_of_speech, part_of_speech_abbr=part_of_speech_abbr, gender_abbr=gender_abbr, words=words, meanings=meanings, gender=gender)
 
 
 @app.route("/word-generator", methods=["GET", "POST"])
@@ -489,6 +558,8 @@ def word_generator():
     db = get_db()
 
     generated_words = []
+
+    custom_style = False
 
     # Get all the beginnings
     def getBeginnings(style):
@@ -505,6 +576,18 @@ def word_generator():
         e_list = db.execute("SELECT word_part FROM word_parts WHERE style_id = ? AND position_id = ?;", (style, 3,)).fetchall()
         return e_list
     
+    # Get all the custom beginnings
+    b_custom_list = db.execute("SELECT word_part FROM user_word_parts WHERE position_id = ? AND user_id = ?;", (1, session["user_id"])).fetchall()
+    
+    # Get all the custom middles
+    m_custom_list = db.execute("SELECT word_part FROM user_word_parts WHERE position_id = ? AND user_id = ?;", (2, session["user_id"])).fetchall()
+    
+    # Get all the custom endings
+    e_custom_list = db.execute("SELECT word_part FROM user_word_parts WHERE position_id = ? AND user_id = ?;", (3, session["user_id"])).fetchall()
+    
+    if len(b_custom_list) == 0 or len(m_custom_list) == 0 or len(e_custom_list) == 0:
+        print("Custom style disabled")
+    
     # If the user clicks 'Generate'
     if request.method == "POST":
 
@@ -514,12 +597,18 @@ def word_generator():
 
             if request.form["style"] == "dalishStyle":
                 style = 1
+                custom_style = False
 
             elif request.form["style"] == "dwemerisStyle":
                 style = 2
+                custom_style = False
 
             elif request.form["style"] == "hutteseStyle":
                 style = 3
+                custom_style = False
+
+            elif request.form["style"] == "customStyle":
+                custom_style = True
 
         except KeyError:
 
@@ -530,11 +619,19 @@ def word_generator():
       
             if request.form["syllables"] == "twoSyllables":
                 for _ in range(10):
-                    b_list = getBeginnings(style)
-                    m_list = getMLiddles(style)
-                    e_list = getEndings(style)
-                    beginnnig = random.choice(b_list)[0]
-                    end = random.choice(e_list)[0]
+
+                    # For custom style
+                    if custom_style:
+                        beginnnig = random.choice(b_custom_list)[0]
+                        end = random.choice(e_custom_list)[0]
+
+                    # For any other style
+                    else: 
+                        b_list = getBeginnings(style)
+                        e_list = getEndings(style)
+                        beginnnig = random.choice(b_list)[0]
+                        end = random.choice(e_list)[0]
+
                     word = beginnnig + end
 
                     generated_words.append(word)
@@ -544,12 +641,22 @@ def word_generator():
 
             elif request.form["syllables"] == "threeSyllables":
                 for _ in range(10):
-                    b_list = getBeginnings(style)
-                    m_list = getMLiddles(style)
-                    e_list = getEndings(style)
-                    beginnnig = random.choice(b_list)[0]
-                    middle = random.choice(m_list)[0]
-                    end = random.choice(e_list)[0]
+
+                    # For custom style
+                    if custom_style:
+                        beginnnig = random.choice(b_custom_list)[0]
+                        middle = random.choice(m_custom_list)[0]
+                        end = random.choice(e_custom_list)[0]
+
+                    # For any other style
+                    else:
+                        b_list = getBeginnings(style)
+                        m_list = getMLiddles(style)
+                        e_list = getEndings(style)
+                        beginnnig = random.choice(b_list)[0]
+                        middle = random.choice(m_list)[0]
+                        end = random.choice(e_list)[0]
+
                     word = beginnnig + middle + end
 
                     generated_words.append(word)
@@ -559,13 +666,24 @@ def word_generator():
                     
             elif request.form["syllables"] == "fourSyllables":
                 for _ in range(10):
-                    b_list = getBeginnings(style)
-                    m_list = getMLiddles(style)
-                    e_list = getEndings(style)
-                    beginnnig = random.choice(b_list)[0]
-                    middle1 = random.choice(m_list)[0]
-                    middle2 = random.choice(m_list)[0]
-                    end = random.choice(e_list)[0]
+
+                    # For custom style
+                    if custom_style:
+                        beginnnig = random.choice(b_custom_list)[0]
+                        middle1 = random.choice(m_custom_list)[0]
+                        middle2 = random.choice(m_custom_list)[0]
+                        end = random.choice(e_custom_list)[0]
+
+                    # For any other style
+                    else:
+                        b_list = getBeginnings(style)
+                        m_list = getMLiddles(style)
+                        e_list = getEndings(style)
+                        beginnnig = random.choice(b_list)[0]
+                        middle1 = random.choice(m_list)[0]
+                        middle2 = random.choice(m_list)[0]
+                        end = random.choice(e_list)[0]
+
                     word = beginnnig + middle1 + middle2 + end
 
                     generated_words.append(word)

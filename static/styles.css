@@ -95,7 +95,7 @@ label {
 .dict-display {
     background-color: #f9faf3;
     height: 100%;
-    padding: 1.5rem 1.5rem;
+    padding: 1rem 1.5rem;
     border-right: 2px solid #b6b6b6;
     overflow: auto;
 }
@@ -294,4 +294,75 @@ table {
 
 .search-btn {
     width: 30%;
+}
+
+.my-gen-settings {
+    background-color: #fff;
+    border: 1px solid #d2d2d2;
+}
+
+.my-gen-settings-input {
+    padding: 0;
+}
+
+.gen-set-input {
+    width: 65%;
+    margin: 5px;
+    max-height: 100%;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    padding-left: 7px;
+}
+
+.gen-set-btn {
+    width: 25%;
+    margin: 5px;
+    background-color: #ebf5fc;
+}
+
+.gen-set-btn:hover {
+    background-color: #b9effc;
+}
+
+.my-gen-header {
+    background-color: #b9effc;
+}
+
+.my-gen-header b {
+    font-size: larger;
+}
+
+.info-small {
+    font-size: 0.8rem;
+}
+
+.wordpart {
+    border: none;
+    margin-top: 3px;
+    margin-bottom: 0px;
+    padding-bottom: 2px;
+    padding-top: 2px;
+}
+
+.fa-trash-can {
+    color: #f16c6f;
+}
+
+.delete-word-part-btn {
+    margin: 0;
+    padding: 0;
+    width: 2rem;
+}
+
+.delete-word-part-btn:hover {
+    background-color: #bb2834;
+}
+
+.delete-word-part-btn:hover > i {
+    color: #fff;
+}
+
+.wp-list {
+    margin-top: 8px;
+    margin-bottom: 10px;
 }
