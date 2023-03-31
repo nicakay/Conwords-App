@@ -6,9 +6,11 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from helpers import get_db, login_required
 import itertools
 
+
 # Configure application
 app = Flask(__name__)
 fa = FontAwesome(app)
+
 
 # Configure session to use filesystem (instead of signed cookies)
 app.config["SESSION_PERMANENT"] = False
@@ -711,3 +713,6 @@ def word_generator():
         return render_template("word-generator.html")
 
     return render_template("word-generator.html", generated_words=generated_words, chosen_style=chosen_style, chosen_syllables=chosen_syllables)
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5001)

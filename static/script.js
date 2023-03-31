@@ -1,6 +1,6 @@
-// Script that enables editing a selected field on the 'dictionary' page
-
 $(document).ready(function() {
+
+    // Script that enables editing a selected field on the 'dictionary' page
 
     $(".edit").on("dblclick", "input, select", function(){
 
@@ -23,6 +23,8 @@ $(document).ready(function() {
     $("#editRecord").on("click", "td", function(){
         $(".edit").children().focus();
     });
+
+    // The switch button that toggles between the word and the meaning view in the dictionary
 
     $("#wordsMeaningsToggle").on("change", function() {
         $("#left-menu-words").toggle();

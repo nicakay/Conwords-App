@@ -32,7 +32,7 @@ Users can add the following details:
 # Dictionary
 Here users can browse the added records that display as a list of added words along with their parts of speech abbreviations. Users can also use this page to search words or to display the list of the meanings of the words and access words from there.
 
-Upon cliking a word, the user can see all the details (as they were added in Add Word). 
+Upon clicking a word, the user can see all the details (as they were added in Add Word). 
 Double-click a value will enter the edit mode where the user can enter new values and save the changes.
 Clicking 'Delete' button removes the selected record and display a corresponding message that confirms which record has just been deleted.
 
@@ -45,6 +45,6 @@ Currently available styles are:
 - Huttese (the language spoken by Hutts in Star Wars)
 - Custom (the user can define their own custom style in Settings (see: Settings))
 
-Users can generate 10 random words containing 2, 3 or random 4 "word parts". They haven't been named "syllables" though they might often be syllables. However, some of the word parts in the implemented styles are not syllables (e.g. *n*, *r* etc.) so that users can receive more interesting results.
+Users can generate 10 random words containing 2, 3 or 4 "word parts". They haven't been named "syllables" though they might often be syllables. However, some of the word parts in the implemented styles are not syllables (e.g. *n*, *r* etc.) so that users can receive more interesting results.
 
 Users can copy a generated word they like with a single click, if they want to use it in the Add Word form or anywhere else.
