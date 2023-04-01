@@ -80,16 +80,17 @@ label {
     background-color: #ffe3cd;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
-    box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+    box-shadow: rgba(0, 0, 0, 0.112) 0px 10px 20px, rgba(0, 0, 0, 0.14) 0px 6px 6px;
 }
 
 .mainrow {
     width: 100%;
+    height: 80vh;
 }
 
 .left-menu {
     background-color: #ffe3cd;
-    height: 100vh;
+    height: 95%;
 }
 
 .dict-display {
@@ -208,8 +209,8 @@ ul.no-bullets {
 
 .record {
     background-color: #f9faf3;
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-    padding: 0.3rem;
+    box-shadow: rgba(0, 0, 0, 0.142) 0px 3px 8px;
+    padding: 1.4rem 1rem 0.8rem 1rem;
 }
 
 .record-label {
@@ -262,7 +263,7 @@ table {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #253b2f;
+    background-color: #253b2f37;
 }
 
 .style-block {
@@ -294,6 +295,14 @@ table {
 
 .search-btn {
     width: 30%;
+    background-color: #2a77b2;
+    color: #e4e4e4;
+    border: none;
+}
+
+.search-btn:hover {
+    background-color: #0f5c95;
+    color: #fff;
 }
 
 .my-gen-settings {
@@ -365,4 +374,20 @@ table {
 .wp-list {
     margin-top: 8px;
     margin-bottom: 10px;
+}
+
+.dict-navi {
+    margin-bottom: 12px;
+}
+
+.btn-dict-navi { 
+    background-color: #2a77b2;
+    color: #e4e4e4;
+    font-weight: bold;
+    width: 6rem;
+}
+
+.btn-dict-navi:hover {
+    background-color: #0f5c95;
+    color: #fff;
 }

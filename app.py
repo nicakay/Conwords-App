@@ -335,9 +335,15 @@ def dictionary():
     if request.method == "GET":
 
         # Details of each entry after clicking a link
+
+        # Assign the value of the clicked word to 'entry_id' / eg. dictionary?value=46
         entry_id = str(request.args.get('value'))
+        # Assign the 'entry_id' to the session 'entry_id' and remember it
         session["entry_id"] = entry_id
+
+        # Fetch RECORD - the details of the currently clicked word
         record = db.execute("SELECT * FROM entries WHERE id = ? AND user_id = ?;", (entry_id, session["user_id"],)).fetchone()
+
         if not record == None:
             session["record"] = record
 

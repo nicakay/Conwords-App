@@ -33,6 +33,7 @@ $(document).ready(function() {
 
 });
 
+
 // Highlights selected word parts on the 'Settings' page
 
 $(function() {
